@@ -100,8 +100,14 @@ type Chromium struct {
 	resizeTimer *time.Timer
 }
 
+var ChromiumInstances []*Chromium
+
 func NewChromium() *Chromium {
 	e := &Chromium{}
+	if ChromiumInstances == nil {
+		ChromiumInstances = make([]*Chromium, 0)
+	}
+	ChromiumInstances = append(ChromiumInstances, e)
 	/*
 	 All these handlers are passed to native code through syscalls with 'uintptr(unsafe.Pointer(handler))' and we know
 	 that a pointer to those will be kept in the native code. Furthermore these handlers als contain pointer to other Go
@@ -227,16 +233,16 @@ func (e *Chromium) SetPadding(padding Rect) {
 }
 
 func (e *Chromium) ResizeWithBounds(bounds *Rect) {
-    if e.hwnd == 0 {
-        return
-    }
+	if e.hwnd == 0 {
+		return
+	}
 
-    bounds.Top += e.padding.Top
-    bounds.Bottom -= e.padding.Bottom
-    bounds.Left += e.padding.Left
-    bounds.Right -= e.padding.Right
+	bounds.Top += e.padding.Top
+	bounds.Bottom -= e.padding.Bottom
+	bounds.Left += e.padding.Left
+	bounds.Right -= e.padding.Right
 
-    e.SetSize(*bounds)
+	e.SetSize(*bounds)
 }
 
 func (e *Chromium) Resize() {
